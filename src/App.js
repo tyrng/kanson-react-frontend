@@ -1,25 +1,36 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import Navbar from './components/layout/Navbar';
+import SignIn from './components/auth/SignIn';
+import SignUp from './components/auth/SignUp';
+import Home from './components/home/Home';
+// import { useSelector } from 'react-redux'
+// import { isLoaded } from 'react-redux-firebase'
+
+// function AuthIsLoaded({ children }) {
+//   const auth = useSelector(state => state.firebase.auth)
+//   if (isLoaded(auth)) return children;
+//   return null;
+// }
+
+export let signedIn = true;
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <BrowserRouter>
+      {/* <AuthIsLoaded> */}
+        <div  className="App">
+          <Navbar signedIn={signedIn} pageName="TODO">
+            <Switch>
+              <Route path='/home' component={Home} exact/>
+              <Route path='/board/:id' component={Home} exact/>
+              <Route path='/signin' component={SignIn} exact/>
+              <Route path='/signup' component={SignUp} exact/>
+            </Switch>
+          </Navbar>
+        </div>
+      {/* </AuthIsLoaded> */}
+    </BrowserRouter>
   );
 }
 

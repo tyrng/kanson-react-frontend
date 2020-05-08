@@ -1,0 +1,24 @@
+export const search = (text) => {
+    return {
+        type: CONSTANTS.SEARCH,
+        payload: {
+            text
+        }
+    }
+}
+
+export const CONSTANTS = {
+    ADD_CARD: "ADD_CARD",
+    UPDATE_CARD: "UPDATE_CARD",
+    DELETE_CARD: "DELETE_CARD",
+    CARD_DRAG_HAPPENED: "CARD_DRAG_HAPPENED",
+    ADD_LIST: "ADD_LIST",
+    UPDATE_LIST: "UPDATE_LIST",
+    DELETE_LIST: "DELETE_LIST",
+    LIST_DRAG_HAPPENED: "LIST_DRAG_HAPPENED",
+    ADD_BOARD: "ADD_BOARD",
+    UPDATE_BOARD: "UPDATE_BOARD",
+    DELETE_BOARD: "DELETE_BOARD",
+    BOARD_DRAG_HAPPENED: "BOARD_DRAG_HAPPENED",
+    SEARCH: "SEARCH"
+};
