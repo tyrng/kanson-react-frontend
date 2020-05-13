@@ -1,64 +1,110 @@
 import { CONSTANTS } from '../actions/rootActions';
-import arrayMove from 'array-move';
-import { v4 as uuidv4 } from 'uuid';
 
-export let initialState = [
-    {
-        id: "board1",
-        index: 0,
-        title: "Board 1",
-    },
-    {
-        id: "board2",
-        index: 1,
-        title: "Board 2",
-    },
-    {
-        id: "board23",
-        index: 2,
-        title: "Some really really really really long name of a board",
-    },
-]
+const initialState = {
+    pending: false,
+    adding: false,
+    updating: false,
+    deleting: false,
+    sorting: false,
+    boards: [],
+    error: null,
+    currentBoardId: null
+}
 
 const boardReducer = (state = initialState, action) => {
     switch (action.type) {
-        case CONSTANTS.BOARD_DRAG_HAPPENED: {
-            const { items, oldIndex, newIndex } = action.payload;
-            let newState = [...state];
-
-            newState = arrayMove(items, oldIndex, newIndex);
-            newState.forEach((board,index) => board.index = index);
-
-            return newState;
-        }
-        case CONSTANTS.ADD_BOARD: {
-            const newBoard = {
-                id: uuidv4(),
-                index: state.length,
-                title: `${action.payload.title.trim()}`
-            };
-            const newState = [...state, newBoard];
-            
-            return newState;
-        }
-        case CONSTANTS.UPDATE_BOARD: {
-            
-            const newState = [...state];
-            const board = newState.find(board => board.id === action.payload.boardId);
-
-            board.title = action.payload.title.trim();
-            return newState;
-        }
-        case CONSTANTS.DELETE_BOARD: {
-            const newState = [...state];
-            const board = newState.find(board => board.id === action.payload.boardId);
-            const index = newState.indexOf(board);
-            newState.splice(index, 1);
-            newState.forEach(item => {
-                if (item.index > board.index) item.index--;
-            });
-            return newState;
-        }
+        case CONSTANTS.SET_CURRENT_BOARDID:
+            return {
+                ...state,
+                currentBoardId: action.payload.currentBoardId
+            }
+        case CONSTANTS.FETCH_BOARDS_PENDING:
+            return {
+                ...state,
+                pending: true
+            }
+        case CONSTANTS.FETCH_BOARDS_SUCCESS:
+            return {
+                ...state,
+                pending: false,
+                boards: action.payload.boards
+            }
+        case CONSTANTS.FETCH_BOARDS_FAILURE:
+            return {
+                ...state,
+                pending: false,
+                error: action.payload.error
+            }
+        case CONSTANTS.ADD_BOARD_PENDING:
+            return {
+                ...state,
+                adding: true
+            }
+        case CONSTANTS.ADD_BOARD_SUCCESS:
+            return {
+                ...state,
+                adding: false
+            }
+        case CONSTANTS.ADD_BOARD_FAILURE:
+            return {
+                ...state,
+                adding: false,
+                error: action.payload.error
+            }
+        case CONSTANTS.UPDATE_BOARD_PENDING:
+            return {
+                ...state,
+                updating: true
+            }
+        case CONSTANTS.UPDATE_BOARD_SUCCESS:
+            return {
+                ...state,
+                updating: false
+            }
+        case CONSTANTS.UPDATE_BOARD_FAILURE:
+            return {
+                ...state,
+                updating: false,
+                error: action.payload.error
+            }
+        case CONSTANTS.DELETE_BOARD_PENDING:
+            return {
+                ...state,
+                deleting: true
+            }
+        case CONSTANTS.DELETE_BOARD_SUCCESS:
+            return {
+                ...state,
+                deleting: false
+            }
+        case CONSTANTS.DELETE_BOARD_FAILURE:
+            return {
+                ...state,
+                deleting: false,
+                error: action.payload.error
+            }
+        case CONSTANTS.SORT_BOARD_PENDING:
+            return {
+                ...state,
+                sorting: true
+            }
+        case CONSTANTS.SORT_BOARD_SUCCESS:
+            return {
+                ...state,
+                sorting: false
+            }
+        case CONSTANTS.SORT_BOARD_FAILURE:
+            return {
+                ...state,
+                sorting: false,
+                error: action.payload.error
+            }
+        case CONSTANTS.UPDATE_BOARD_UI_IMMEDIATE:
+            return {
+                ...state,
+                sorting: state.sorting,
+                boards: action.payload.boards != null ? [...action.payload.boards] : [...state.boards]
+            }
         default:
             return state;
     }

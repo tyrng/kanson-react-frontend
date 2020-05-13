@@ -5,7 +5,7 @@ import Textarea from 'react-textarea-autosize';
 import Button from '@material-ui/core/Button';
 import { connect } from 'react-redux';
 import { addCard } from '../../store/actions/cardActions';
-import {sort} from '../../store/actions/listActions'
+import {updateListUIImmediate} from '../../store/actions/listActions'
 
 class ActionButton extends React.Component {
 
@@ -15,7 +15,7 @@ class ActionButton extends React.Component {
     };
 
     resort = () => {
-        this.props.dispatch(sort(this.props.lists, 0 ,0))
+        this.props.dispatch(updateListUIImmediate())
     }
 
     openForm = () => {
@@ -144,6 +144,6 @@ const styles = {
 }
 
 const mapStateToProps = state => ({
-  lists: state.lists
+  lists: state.lists.lists
 });
 export default connect(mapStateToProps)(ActionButton);

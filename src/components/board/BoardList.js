@@ -11,7 +11,7 @@ import { Droppable } from 'react-beautiful-dnd';
 import {SortableHandle} from 'react-sortable-hoc';
 import ActionButton from './ActionButton';
 import Textarea from 'react-textarea-autosize';
-import {sort} from '../../store/actions/listActions'
+import {updateListUIImmediate} from '../../store/actions/listActions'
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -28,7 +28,7 @@ class BoardList extends React.Component {
     state = {
         open: false,
         dialogText: this.props.list.title,
-        selectedBoard: this.props.boards.find((board) => this.props.list.boardId === board.id).id,
+        selectedBoard: this.props.boards.find((board) => this.props.list.boardId === board.id) ? this.props.boards.find((board) => this.props.list.boardId === board.id).id : '',
         showIcon: false
     };
 
@@ -66,16 +66,17 @@ class BoardList extends React.Component {
     };
 
     resort = () => {
-        this.props.dispatch(sort(this.props.lists, 0, 0))
+        this.props.dispatch(updateListUIImmediate())
     }
 
     SortHandle = SortableHandle(({value}) => {
         return (
             <Typography gutterBottom variant="h5" component="h2">
                 <Textarea className={this.props.classes.textarea} value={value} readOnly onHeightChange={this.resort}
-                        onMouseEnter={ () => { if (document.body.style.cursor !== 'grabbing') document.body.style.cursor = 'grab' } }
-                        onMouseLeave={ () => { if (document.body.style.cursor === 'grab') document.body.style.cursor = '' } }
-                        onMouseDown={ () => { document.body.style.cursor = 'grabbing' } }/>
+                        style={{cursor: this.props.currentBoardId == null ? '' : 'grab'}}
+                        onMouseEnter={ () => { if (document.body.style.cursor !== 'grabbing' && this.props.currentBoardId != null) document.body.style.cursor = 'grab' } }
+                        onMouseLeave={ () => { if (document.body.style.cursor === 'grab' && this.props.currentBoardId != null) document.body.style.cursor = '' } }
+                        onMouseDown={ () => { if (this.props.currentBoardId != null) document.body.style.cursor = 'grabbing' } }/>
             </Typography>
           );
       });
@@ -179,14 +180,15 @@ const styles = theme => ({
       WebkitUserSelect: 'none !important',
       msUserSelect: 'none',
       backgroundColor: 'inherit',
-      cursor: 'grab'
+    //   cursor: 'grab'
     }
 });
 
 const mapStateToProps = state => ({
-  lists: state.lists,
-  cards: state.cards,
-  boards: state.boards
+  lists: state.lists.lists,
+  cards: state.cards.cards,
+  boards: state.boards.boards,
+  currentBoardId: state.boards.currentBoardId
 });
 
 export default compose(

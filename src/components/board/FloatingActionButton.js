@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function FloatingActionButton(props) {
   const { boardId } = props;
-  const boards = useSelector(state => state.boards);
+  const boards = useSelector(state => state.boards.boards);
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const [text, setText] = React.useState("");

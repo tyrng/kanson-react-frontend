@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import SignedInLinks from './SignedInLinks';
@@ -6,7 +7,8 @@ import SignedOutLinks from './SignedOutLinks';
 
 const Drawer = (props) => {
     const classes = UseStyles();
-    const { drawerState, toggleDrawer, signedIn, setDragging } = props;
+    const { drawerState, toggleDrawer, setDragging, user } = props;
+    const loggedIn = useSelector(state => state.authentication.loggedIn);
 
     return (
         <SwipeableDrawer
@@ -19,7 +21,7 @@ const Drawer = (props) => {
             className={classes.list}
             role="presentation"
         >
-            {signedIn ? <SignedInLinks toggleDrawer={toggleDrawer} setDragging={setDragging} activeLinkClass={classes.activeLink}/> : <SignedOutLinks activeLinkClass={classes.activeLink}/>}
+            {loggedIn ? <SignedInLinks toggleDrawer={toggleDrawer} setDragging={setDragging} activeLinkClass={classes.activeLink} user={user}/> : <SignedOutLinks activeLinkClass={classes.activeLink}/>}
         </div>
       </SwipeableDrawer>
     )

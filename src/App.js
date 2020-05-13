@@ -1,37 +1,52 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { Router, Switch, Route, Redirect } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { alertActions } from './store/actions/alertActions';
+import { PrivateRoute } from './components/PrivateRoute';
 import Navbar from './components/layout/Navbar';
 import SignIn from './components/auth/SignIn';
 import SignUp from './components/auth/SignUp';
 import Home from './components/home/Home';
-// import { useSelector } from 'react-redux'
-// import { isLoaded } from 'react-redux-firebase'
+import history from './helpers/history'
+class App extends React.Component {
+  constructor(props) {
+      super(props);
 
-// function AuthIsLoaded({ children }) {
-//   const auth = useSelector(state => state.firebase.auth)
-//   if (isLoaded(auth)) return children;
-//   return null;
-// }
-
-export let signedIn = true;
-
-function App() {
-  return (
-    <BrowserRouter>
-      {/* <AuthIsLoaded> */}
-        <div  className="App">
-          <Navbar signedIn={signedIn} pageName="TODO">
-            <Switch>
-              <Route path='/home' component={Home} exact/>
-              <Route path='/board/:id' component={Home} exact/>
-              <Route path='/signin' component={SignIn} exact/>
-              <Route path='/signup' component={SignUp} exact/>
-            </Switch>
-          </Navbar>
-        </div>
-      {/* </AuthIsLoaded> */}
-    </BrowserRouter>
-  );
+      const { dispatch } = this.props;
+      history.listen((location, action) => {
+          // clear alert on location change
+          dispatch(alertActions.clear());
+      });
+  }
+  render(){
+    const { alert } = this.props;
+    return (
+      <div>
+        {alert.message &&
+          <div className={`alert ${alert.type}`}>{alert.message}</div>
+        }
+        <Router history={history}>
+          <div  className="App">
+            <Navbar>
+              <Switch>
+                <Redirect exact from="/" to="/home" />
+                <PrivateRoute path='/home' component={Home} exact/>
+                <PrivateRoute path='/board/:id' component={Home} exact/>
+                <Route path='/signin' component={SignIn} exact/>
+                <Route path='/signup' component={SignUp} exact/>
+              </Switch>
+            </Navbar>
+          </div>
+        </Router>
+      </div>
+    );
+  }
 }
 
-export default App;
+function mapStateToProps(state) {
+  const { alert } = state;
+  return {
+      alert
+  };
+}
+export default connect(mapStateToProps)(App);

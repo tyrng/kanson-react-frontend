@@ -1,6 +1,8 @@
 import React from 'react';
+import {compose} from 'redux';
+import {connect} from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
-import { makeStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import {
   Grid,
   Button,
@@ -8,121 +10,148 @@ import {
   Link,
   Typography
 } from '@material-ui/core';
+import { userActions } from '../../store/actions/userActions';
+import {setPageName} from '../../store/actions/rootActions';
 
-const SignIn = () => {
-  const classes = useStyles();
-
-  const handleChange = event => {
-    event.persist();
-  }
-
-  const handleSignIn = event => {
-    event.preventDefault();
-    console.log('submit clicked');
+class SignIn extends React.Component {
+  state = {
+    username: '',
+    password: '',
+    submitted: false
   };
 
-  return (
-    <div className={classes.root}>
-        <div className={classes.content}>
-            <div className={classes.contentBody}>
-                <form
-                className={classes.form}
-                onSubmit={handleSignIn}
-                >
-                <Typography
-                    className={classes.title}
-                    variant="h2"
-                >
-                    Sign in
-                </Typography>
-                <Typography
-                    color="textSecondary"
-                    gutterBottom
-                >
-                    Sign in with social media
-                </Typography>
-                <Grid
-                    className={classes.socialButtons}
-                    container
-                    spacing={2}
-                >
-                    <Grid item>
-                    <Button
-                        color="primary"
-                        onClick={handleSignIn}
-                        size="large"
-                        variant="contained"
-                    >
-                        Login with Facebook
-                    </Button>
-                    </Grid>
-                    <Grid item>
-                    <Button
-                        onClick={handleSignIn}
-                        size="large"
-                        variant="contained"
-                    >
-                        Login with Google
-                    </Button>
-                    </Grid>
-                </Grid>
-                <Typography
-                    align="center"
-                    className={classes.sugestion}
-                    color="textSecondary"
-                    variant="body1"
-                >
-                    or login with email address
-                </Typography>
-                <TextField
-                    className={classes.textField}
-                    fullWidth
-                    label="Email address"
-                    name="email"
-                    onChange={handleChange}
-                    type="text"
-                    variant="outlined"
-                />
-                <TextField
-                    className={classes.textField}
-                    fullWidth
-                    label="Password"
-                    name="password"
-                    onChange={handleChange}
-                    type="password"
-                    variant="outlined"
-                />
-                <Button
-                    className={classes.signInButton}
-                    color="primary"
-                    fullWidth
-                    size="large"
-                    type="submit"
-                    variant="contained"
-                >
-                    Sign in now
-                </Button>
-                <Typography
-                    color="textSecondary"
-                    variant="body1"
-                >
-                    Don't have an account?{' '}
-                    <Link
-                    component={RouterLink}
-                    to="/signup"
-                    variant="h6"
-                    >
-                    Sign up
-                    </Link>
-                </Typography>
-                </form>
-            </div>
-        </div>
-    </div>
-  );
+  componentDidMount = () => {
+    this.props.dispatch(userActions.logout());
+    this.props.dispatch(setPageName('Sign In'));
+  }
+
+  handleChange = (e) => {
+    const { name, value } = e.target;
+    this.setState({ [name]: value });
+  }
+
+  handleSignIn = (e) => {
+    e.preventDefault();
+
+    this.setState({ submitted: true });
+    const { username, password } = this.state;
+    const { dispatch } = this.props;
+    if (username && password) {
+        dispatch(userActions.login(username, password));
+    }
+  }
+
+  handleSocialSignIn = event => {
+    event.preventDefault();
+    console.log('not yet implemented');
+  };
+
+  render() {
+    const {classes} = this.props;
+    return (
+      <div className={classes.root}>
+          <div className={classes.content}>
+              <div className={classes.contentBody}>
+                  <form
+                  className={classes.form}
+                  onSubmit={this.handleSocialSignIn}
+                  >
+                  <Typography
+                      className={classes.title}
+                      variant="h2"
+                  >
+                      Sign in
+                  </Typography>
+                  <Typography
+                      color="textSecondary"
+                      gutterBottom
+                  >
+                      Sign in with social media
+                  </Typography>
+                  <Grid
+                      className={classes.socialButtons}
+                      container
+                      spacing={2}
+                  >
+                      <Grid item>
+                      <Button
+                          color="primary"
+                          onClick={this.handleSocialSignIn}
+                          size="large"
+                          variant="contained"
+                      >
+                          Login with Facebook
+                      </Button>
+                      </Grid>
+                      <Grid item>
+                      <Button
+                          onClick={this.handleSocialSignIn}
+                          size="large"
+                          variant="contained"
+                      >
+                          Login with Google
+                      </Button>
+                      </Grid>
+                  </Grid>
+                  <Typography
+                      align="center"
+                      className={classes.sugestion}
+                      color="textSecondary"
+                      variant="body1"
+                  >
+                      or login with email address
+                  </Typography>
+                  <TextField
+                      className={classes.textField}
+                      fullWidth
+                      label="Username"
+                      name="username"
+                      onChange={this.handleChange}
+                      type="text"
+                      variant="outlined"
+                  />
+                  <TextField
+                      className={classes.textField}
+                      fullWidth
+                      label="Password"
+                      name="password"
+                      onChange={this.handleChange}
+                      type="password"
+                      variant="outlined"
+                  />
+                  <Button
+                      className={classes.signInButton}
+                      onClick={this.handleSignIn}
+                      color="primary"
+                      fullWidth
+                      size="large"
+                      type="submit"
+                      variant="contained"
+                  >
+                      Sign in now
+                  </Button>
+                  <Typography
+                      color="textSecondary"
+                      variant="body1"
+                  >
+                      Don't have an account?{' '}
+                      <Link
+                      component={RouterLink}
+                      to="/signup"
+                      variant="h6"
+                      >
+                      Sign up
+                      </Link>
+                  </Typography>
+                  </form>
+              </div>
+          </div>
+      </div>
+    );
+  }
 };
 
-const useStyles = makeStyles(theme => ({
+const styles = (theme) => ({
   root: {
     backgroundColor: theme.palette.background.default,
     height: '100%',
@@ -174,6 +203,16 @@ const useStyles = makeStyles(theme => ({
   signInButton: {
     margin: theme.spacing(2, 0)
   }
-}));
+});
 
-export default SignIn;
+function mapStateToProps(state) {
+  const { loggingIn } = state.authentication;
+  return {
+      loggingIn
+  };
+}
+
+export default compose(
+  connect(mapStateToProps),
+   withStyles(styles)
+   )(SignIn);

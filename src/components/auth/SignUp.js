@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { Link as RouterLink } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
+import { userActions } from '../../store/actions/userActions';
 import {
   Button,
   TextField,
@@ -8,13 +10,42 @@ import {
   Checkbox,
   Typography
 } from '@material-ui/core';
+import {setPageName} from '../../store/actions/rootActions';
 
 const SignUp = props => {
   const classes = useStyles();
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Update the document title using the browser API
+    dispatch(setPageName('Sign Up'));
+  });
+
+
+  const handleFirstNameChange = (e) => {
+    setFirstName(e.target.value);
+  }
+
+  const handleLastNameChange = (e) => {
+    setLastName(e.target.value);
+  }
+
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+  }
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  }
 
   const handleSignUp = event => {
     event.preventDefault();
-    console.log('signup clicked')
+    dispatch(userActions.signUp(username, password, firstName, lastName));
   };
 
   return (
@@ -44,6 +75,7 @@ const SignUp = props => {
                 name="firstName"
                 type="text"
                 variant="outlined"
+                onChange={handleFirstNameChange}
             />
             <TextField
                 className={classes.textField}
@@ -52,14 +84,16 @@ const SignUp = props => {
                 name="lastName"
                 type="text"
                 variant="outlined"
+                onChange={handleLastNameChange}
             />
             <TextField
                 className={classes.textField}
                 fullWidth
-                label="Email address"
-                name="email"
+                label="Username"
+                name="username"
                 type="text"
                 variant="outlined"
+                onChange={handleUsernameChange}
             />
             <TextField
                 className={classes.textField}
@@ -68,6 +102,7 @@ const SignUp = props => {
                 name="password"
                 type="password"
                 variant="outlined"
+                onChange={handlePasswordChange}
             />
             <div className={classes.policy}>
                 <Checkbox

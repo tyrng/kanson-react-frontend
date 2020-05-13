@@ -12,12 +12,12 @@ import SearchIcon from '@material-ui/icons/Search';
 import InputBase from '@material-ui/core/InputBase';
 import Drawer from './Drawer';
 import {search} from '../../store/actions/rootActions';
-import { debounce } from 'underscore';
+import { debounce } from 'lodash';
 
 class Navbar extends React.Component {
   state = { 
     drawerState: false,
-    searchText: this.props.search,
+    searchText: '',
     dragging: false
   };
 
@@ -34,11 +34,14 @@ class Navbar extends React.Component {
 
   handleSearchOnChange = e => {
     e.persist();
-    debounce(this.props.dispatch(search(e.target.value)), 500);
+    this.setState({searchText: e.target.value});
+    this.debouncedSearch();
   }
 
+  debouncedSearch = debounce(() => {this.props.dispatch(search(this.state.searchText))}, 250);
+
   render() {
-    const { signedIn, pageName, classes, search } = this.props;
+    const { pageName, classes, user } = this.props;
 
     return (
       <div className={classes.root}>
@@ -60,24 +63,26 @@ class Navbar extends React.Component {
             <Typography className={classes.title} variant="h6" noWrap>
               { pageName ? pageName : null}
             </Typography>
-            <div className={classes.search}>
-              <div className={classes.searchIcon}>
-                <SearchIcon />
+            { this.props.user ? 
+              <div className={classes.search}>
+                <div className={classes.searchIcon}>
+                  <SearchIcon />
+                </div>
+                <InputBase
+                  placeholder="Search…"
+                  classes={{
+                    root: classes.inputRoot,
+                    input: classes.inputInput,
+                  }}
+                  value={this.state.searchText}
+                  onChange={this.handleSearchOnChange}
+                  inputProps={{ 'aria-label': 'search' }}
+                />
               </div>
-              <InputBase
-                placeholder="Search…"
-                classes={{
-                  root: classes.inputRoot,
-                  input: classes.inputInput,
-                }}
-                value={search}
-                onChange={this.handleSearchOnChange}
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </div>
+            : null }
           </Toolbar>
         </AppBar>
-          <Drawer setDragging={this.setDragging} drawerState={this.state.drawerState} toggleDrawer={this.toggleDrawer} signedIn={signedIn}/>
+          <Drawer setDragging={this.setDragging} drawerState={this.state.drawerState} toggleDrawer={this.toggleDrawer} user={user} />
         <main
           className={classes.content}
         >
@@ -129,6 +134,7 @@ const styles = (theme) => ({
     [theme.breakpoints.up('sm')]: {
       display: 'block',
     },
+    whiteSpace: 'pre'
   },
   search: {
     position: 'relative',
@@ -172,7 +178,9 @@ const styles = (theme) => ({
 });
 
 const mapStateToProps = state => ({
-  search: state.search
+  search: state.search,
+  user: state.authentication.user,
+  pageName: state.pageName
 });
 
 export default compose(

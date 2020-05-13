@@ -7,19 +7,17 @@ import { connect } from 'react-redux';
 import { compose } from 'redux';
 import Textarea from 'react-textarea-autosize';
 import Typography from '@material-ui/core/Typography';
-import {sort} from '../../store/actions/listActions';
+import {updateListUIImmediate} from '../../store/actions/listActions';
 import { updateCard, deleteCard } from '../../store/actions/cardActions';
-import { debounce } from 'underscore';
 import Icon from '@material-ui/core/Icon';
+import {debounce} from 'lodash'
 
 function getStyle(style, snapshot) {
-  // console.log('test2')
   if (!snapshot.isDropAnimating) {
     return style;
   }
   return {
     ...style,
-    // cannot be 0, but make it super tiny
     transitionDuration: `0.0001s`,
   };
 }
@@ -45,8 +43,12 @@ class BoardCard extends React.Component {
 
   onChange = (e) => {
     this.setState({text: e.target.value});
-    debounce(this.props.dispatch(updateCard(this.props.card.id, e.target.value)), 500);
+    this.debouncedUpdateCard();
   }
+
+  debouncedUpdateCard = debounce(() => {
+    this.props.dispatch(updateCard(this.props.card.id, this.state.text));
+  }, 1000, {'leading':false, 'trailing':true});
 
   moveCaretAtEnd(e) {
     var temp_value = e.target.value
@@ -54,12 +56,11 @@ class BoardCard extends React.Component {
     e.target.value = temp_value
   }
   resort = () => {
-      this.props.dispatch(sort(this.props.lists, 0, 0));
+      this.props.dispatch(updateListUIImmediate());
   }
 
   onMouseDown = () => {
     this.props.dispatch(deleteCard(this.props.card.id));
-    this.resort();
   }
 
   closeButtonTrue = () => {
@@ -73,9 +74,6 @@ class BoardCard extends React.Component {
     const { classes, card, index } = this.props;
 
     const id = card.id;
-    // console.log(id)
-    // const index = card.index;
-
 
     return (
         <Draggable draggableId={String(id)} index={index} disableInteractiveElementBlocking={this.state.disableInteractive} >
@@ -146,7 +144,7 @@ const styles = theme => ({
 });
 
 const mapStateToProps = state => ({
-  lists: state.lists
+  lists: state.lists.lists
 });
 
 export default compose(

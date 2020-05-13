@@ -63,7 +63,8 @@ const SortableList = SortableContainer(({items}) => {
 const SignedInLinks = (props) => {
 
     const classes = UseStyles();
-    const boards = useSelector(state => state.boards);
+    const { user } = props;
+    const boards = useSelector(state => state.boards.boards).sort((a,b) => a.index - b.index);
     const [addDialogOpen, setAddDialogOpen] = React.useState(false);
     const [addBoardText, setAddBoardText] = React.useState('');
     const [editDialogOpen, setEditDialogOpen] = React.useState(false);
@@ -78,7 +79,7 @@ const SignedInLinks = (props) => {
     }
 
     const onSortEnd = ({oldIndex, newIndex}) => {
-      dispatch(sort(boards, oldIndex, newIndex));
+      dispatch(sort(oldIndex, newIndex));
       setDragging(false);
     };
 
@@ -136,9 +137,9 @@ const SignedInLinks = (props) => {
     <div>
       <div className={classes.avatarRoot}>
         <div className={classes.avatarMargin}>
-            <Avatar className={classes.avatar}>TO</Avatar>  
+          <Avatar className={classes.avatar}>{user.firstName[0] + user.lastName[0]}</Avatar>  
         </div>
-        <h2>Tyrone Ong</h2>
+        <h2>{user.firstName + ' ' + user.lastName}</h2>
       </div>
       <List>
         <Divider className={classes.dividerMargin}/>
@@ -174,10 +175,20 @@ const SignedInLinks = (props) => {
           </ListItem>
         </div>
         <Divider className={classes.dividerMargin}/>
-        <ListItem button key='Sign Out'>
-          <ListItemIcon><ExitToAppIcon /></ListItemIcon>
-          <ListItemText primary='Sign Out' />
-        </ListItem>
+        <Link
+        component={NavLink}
+        to='/signin'
+        underline='none'
+        color='inherit'
+        onClick={toggleDrawer(false)}
+        activeClassName={activeLinkClass}
+        exact
+        >
+          <ListItem button key='Sign Out'>
+            <ListItemIcon><ExitToAppIcon /></ListItemIcon>
+            <ListItemText primary='Sign Out' />
+          </ListItem>
+        </Link>
       </List>
       <Dialog open={addDialogOpen} onClose={handleAddDialogClose} aria-labelledby="form-dialog-title">
         <DialogTitle id="form-dialog-title">Add board</DialogTitle>
@@ -233,7 +244,7 @@ const SignedInLinks = (props) => {
                   margin="dense"
                   id="name"
                   onChange={handleEditBoardText}
-                  label="List title"
+                  label="Board title"
                   type="text"
                   value={editBoardText}
                   fullWidth
@@ -247,7 +258,7 @@ const SignedInLinks = (props) => {
               Delete Board
           </Button>
           <Button onClick={handleUpdateBoard} color="primary">
-              Update List
+              Update Board
           </Button>
           </DialogActions>
       </Dialog>
