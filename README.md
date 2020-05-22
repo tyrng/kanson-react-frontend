@@ -12,5 +12,6 @@ Kanson - A Kanban Board with Masonry layout
 
 # Setting Up
 1. Change the apiUrl strings in config/apiConfig.js to your API endpoint.
-2. npm start
+2. ```npm install``` to install all dependencies
+2. ```npm start``` to run the development build
 3. Sign up an account using a username and password, Facebook and Google authentication has not implemented yet.
