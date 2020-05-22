@@ -11,7 +11,7 @@ class Home extends Component {
 
     return (
       <React.Fragment>
-        <Container className={classes.cardGrid} maxWidth="md">
+        <Container className={classes.cardGrid} >
           <Board key={boardId} boardId={boardId}/>
         </Container>
       </React.Fragment>

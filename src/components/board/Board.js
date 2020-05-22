@@ -4,7 +4,7 @@ import {connect} from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import BoardList from './BoardList';
 import {SortableContainer, SortableElement} from 'react-sortable-hoc';
-import {sort, fetchLists, fetchListsByBoardId, updateListUIImmediate} from '../../store/actions/listActions'
+import {sort, fetchLists, fetchListsByBoardId} from '../../store/actions/listActions'
 import {sort as cardSort, fetchCards} from '../../store/actions/cardActions'
 import Masonry from 'react-mason';
 import { DragDropContext } from 'react-beautiful-dnd';
@@ -40,7 +40,6 @@ class Board extends React.Component {
           destination.index,
           draggableId
       ));
-      // this.resort(this.props.dispatch, lists)
   }
 
   onSortStart= () => (document.body.style.cursor = 'grabbing')
@@ -49,16 +48,6 @@ class Board extends React.Component {
     this.props.dispatch(sort(oldIndex, newIndex));
     document.body.style.cursor = 'default';
   };
-  
-
-  sleep = (ms) => {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  resort = async (dispatch, lists) => {
-    await this.sleep(250);
-    dispatch(updateListUIImmediate())
-  }
   SortableItem = SortableElement(({value}) => {
     return (
       // <Grid key={value.id} item xs={12} sm={6} md={4}>
