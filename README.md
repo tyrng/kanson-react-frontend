@@ -1,4 +1,4 @@
-# kanson-netcore-backend
+# kanson-react-frontend
 Kanson - A Kanban Board with Masonry layout
 
 # Features
