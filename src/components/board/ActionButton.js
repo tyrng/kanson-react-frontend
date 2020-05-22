@@ -20,13 +20,13 @@ class ActionButton extends React.Component {
 
     openForm = () => {
         this.setState({
-            formOpen: true
+            formOpen: true, text: ``
         }, this.resort());
     };
 
     closeForm = e => {
         this.setState({
-            formOpen: false
+            formOpen: false, text: ``
         }, this.resort());
     };
 
@@ -46,6 +46,7 @@ class ActionButton extends React.Component {
             });
             dispatch(addCard(listID, text));
         }
+        this.closeForm();
         return
     }
 
@@ -81,7 +82,6 @@ class ActionButton extends React.Component {
                 <Textarea
                 placeholder={placeholder}
                 autoFocus
-                onBlur={this.closeForm}
                 onHeightChange={this.resort}
                 onChange={this.handleInputChange}
                 style={{
@@ -105,6 +105,7 @@ class ActionButton extends React.Component {
                     {btnTitle}{" "}
                 </Button>
                 <Icon
+                onMouseDown={this.closeForm}
                 style={{
                     marginLeft: 8,
                     cursor: "pointer"
