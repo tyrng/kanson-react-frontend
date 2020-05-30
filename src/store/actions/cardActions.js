@@ -71,12 +71,20 @@ export const addCard = (listId, text) => {
     return (dispatch, getState) => {
         dispatch(addCardPending());
 
-        const listCards = [...getState().cards.cards].filter(card => card.listId === listId);
+
+        const allCards = [...getState().cards.cards];
+        const listCards = [...allCards].filter(card => card.listId === listId);
+        const newCard = {
+            id: uuidv4(), listId: listId, index: listCards.length, text: text.trim()
+        }
+        const cards = [...allCards, newCard];
+
+        dispatch(updateCardUIImmediate(cards));
 
         const requestOptions = {
             method: 'POST',
             headers: { ...authHeader(), 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: uuidv4(), listId: listId, index: listCards.length, text: text.trim() })
+            body: JSON.stringify(newCard)
         };
         fetch(`${apiUrl}/cards`, requestOptions)
         .then(res => {
@@ -179,9 +187,9 @@ export const deleteCard = (cardId) => {
     return (dispatch, getState) => {
         dispatch(deleteCardPending());
         const allCards = [...getState().cards.cards];
-        const card = allCards.filter(card => card.id !== cardId);
+        const cards = allCards.filter(card => card.id !== cardId);
 
-        dispatch(updateCardUIImmediate(card));
+        dispatch(updateCardUIImmediate(cards));
 
         const requestOptions = {
             method: 'DELETE',

@@ -12,10 +12,12 @@ import {
 } from '@material-ui/core';
 import { userActions } from '../../store/actions/userActions';
 import {setPageName} from '../../store/actions/rootActions';
+import GoogleLogin from 'react-google-login';
+import {googleClientId} from '../../config/apiConfig';
 
 class SignIn extends React.Component {
   state = {
-    username: '',
+    email: '',
     password: '',
     submitted: false
   };
@@ -34,9 +36,10 @@ class SignIn extends React.Component {
     e.preventDefault();
 
     this.setState({ submitted: true });
-    const { username, password } = this.state;
+    const { email, password } = this.state;
+    const username = email;
     const { dispatch } = this.props;
-    if (username && password) {
+    if (email && password) {
         dispatch(userActions.login(username, password));
     }
   }
@@ -46,8 +49,20 @@ class SignIn extends React.Component {
     console.log('not yet implemented');
   };
 
+  responseGoogle = (response) => {
+    console.log("google console");
+    console.log(response);
+    // console.log(response.accessToken)
+    const { dispatch } = this.props;
+    // this.signup(response, 'google');
+    if(response) {
+      dispatch(userActions.googleLogin(response.tokenObj.id_token));
+    }
+  }
+
   render() {
     const {classes} = this.props;
+
     return (
       <div className={classes.root}>
           <div className={classes.content}>
@@ -73,7 +88,7 @@ class SignIn extends React.Component {
                       container
                       spacing={2}
                   >
-                      <Grid item>
+                      {/* <Grid item>
                       <Button
                           color="primary"
                           onClick={this.handleSocialSignIn}
@@ -81,16 +96,25 @@ class SignIn extends React.Component {
                           variant="contained"
                       >
                           Login with Facebook
-                      </Button>
-                      </Grid>
+                      </Button> 
+                      </Grid> */}
                       <Grid item>
-                      <Button
-                          onClick={this.handleSocialSignIn}
+                        <GoogleLogin
+                        clientId={googleClientId}
+                        buttonText="Login with Google"
+                        onSuccess={this.responseGoogle}
+                        onFailure={this.responseGoogle}
+                        render={renderProps => (
+                          <Button
+                          color="primary"
+                          onClick={renderProps.onClick}
+                          disabled={renderProps.disabled}
                           size="large"
                           variant="contained"
                       >
                           Login with Google
                       </Button>
+                        )}/>
                       </Grid>
                   </Grid>
                   <Typography
@@ -104,10 +128,10 @@ class SignIn extends React.Component {
                   <TextField
                       className={classes.textField}
                       fullWidth
-                      label="Username"
-                      name="username"
+                      label="Email"
+                      name="email"
                       onChange={this.handleChange}
-                      type="text"
+                      type="email"
                       variant="outlined"
                   />
                   <TextField

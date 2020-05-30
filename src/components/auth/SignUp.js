@@ -16,7 +16,7 @@ const SignUp = props => {
   const classes = useStyles();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const dispatch = useDispatch();
@@ -35,8 +35,8 @@ const SignUp = props => {
     setLastName(e.target.value);
   }
 
-  const handleUsernameChange = (e) => {
-    setUsername(e.target.value);
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value);
   }
 
   const handlePasswordChange = (e) => {
@@ -45,7 +45,7 @@ const SignUp = props => {
 
   const handleSignUp = event => {
     event.preventDefault();
-    dispatch(userActions.signUp(username, password, firstName, lastName));
+    dispatch(userActions.signUp(email, password, firstName, lastName));
   };
 
   return (
@@ -89,11 +89,11 @@ const SignUp = props => {
             <TextField
                 className={classes.textField}
                 fullWidth
-                label="Username"
-                name="username"
-                type="text"
+                label="Email"
+                name="email"
+                type="email"
                 variant="outlined"
-                onChange={handleUsernameChange}
+                onChange={handleEmailChange}
             />
             <TextField
                 className={classes.textField}

@@ -3,6 +3,7 @@ import { apiUrl } from '../config/apiConfig';
 import { v4 as uuidv4 } from 'uuid';
 export const userService = {
     login,
+    googleLogin,
     logout,
     getAll,
     signUp
@@ -16,6 +17,21 @@ function login(username, password) {
     };
 
     return fetch(`${apiUrl}/auth`, requestOptions)
+        .then(handleResponse)
+        .then(user => {
+            // store user details and jwt token in local storage to keep user logged in between page refreshes
+            localStorage.setItem('user', JSON.stringify(user));
+
+            return user;
+        });
+}
+
+function googleLogin(token) {
+    const requestOptions = {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+    };
+    return fetch(`${apiUrl}/auth/googleLogin/${token}`, requestOptions)
         .then(handleResponse)
         .then(user => {
             // store user details and jwt token in local storage to keep user logged in between page refreshes

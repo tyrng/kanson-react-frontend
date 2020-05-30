@@ -106,12 +106,17 @@ export const addList = (boardId, title) => {
     return (dispatch, getState) => {
         dispatch(addListPending());
 
-        const boardLists = [...getState().lists.lists].filter(list => list.boardId === boardId);
+        const allLists = [...getState().lists.lists];
+        const boardLists = [...allLists].filter(list => list.boardId === boardId);
+        const newList = { id: uuidv4(), boardId: boardId, index: boardLists.length, title: title.trim() };
+        const lists = [...allLists, newList];
+
+        dispatch(updateListUIImmediate(lists));
 
         const requestOptions = {
             method: 'POST',
             headers: { ...authHeader(), 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: uuidv4(), boardId: boardId, index: boardLists.length, title: title.trim() })
+            body: JSON.stringify(newList)
         };
         fetch(`${apiUrl}/lists`, requestOptions)
         .then(res => {
@@ -156,11 +161,21 @@ export const updateListError = (error) => {
 export const updateList = (listId, boardId, title) => {
     return (dispatch, getState) => {
         dispatch(updateListPending());
-        const list = getState().lists.lists.find(list => list.id === listId);
+        
+        const allLists = [...getState().lists.lists];
+        const list = allLists.find(list => list.id === listId);
+        const listIdx = allLists.findIndex(x => x.id === list.id);
+        const newList = { id: list.id, boardId: boardId, index: list.index, title: title.trim() };
+        allLists[listIdx] = newList;
+
+        const lists = [...allLists];
+
+        dispatch(updateListUIImmediate(lists));
+
         const requestOptions = {
             method: 'PUT',
             headers: { ...authHeader(), 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: list.id, boardId: boardId, index: list.index, title: title.trim() })
+            body: JSON.stringify(newList)
         };
         fetch(`${apiUrl}/lists/${listId}`, requestOptions)
         .then(res => {
@@ -205,6 +220,12 @@ export const deleteListError = (error) => {
 export const deleteList = (listId) => {
     return (dispatch, getState) => {
         dispatch(deleteListPending());
+
+        const allLists = [...getState().lists.lists];
+        const lists = allLists.filter(list => list.id !== listId);
+
+        dispatch(updateListUIImmediate(lists));
+
         const requestOptions = {
             method: 'DELETE',
             headers: authHeader(),
