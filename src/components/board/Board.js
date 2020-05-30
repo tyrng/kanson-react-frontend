@@ -58,6 +58,7 @@ class Board extends React.Component {
 
   SortableList = SortableContainer(({items}) => {
     const disable = this.props.boardId ? false : true;
+    const SortableI = this.SortableItem;
     if (items) {
       return (
         <DragDropContext onDragEnd={this.onDragEnd(items)}>
@@ -72,7 +73,7 @@ class Board extends React.Component {
               const cardFilter = cardCount !== 0;
               if (!cardFilter && !listFilter) return null;
               return (
-                <this.SortableItem key={item.id} value={{listCards: listCards, list: item}} index={index} disabled={disable}/>
+                <SortableI key={item.id} value={{listCards: listCards, list: item}} index={index} disabled={disable}/>
             )})}
           </Masonry>
         </DragDropContext>
@@ -109,10 +110,11 @@ class Board extends React.Component {
   }
 
   const sortedLists = lists.sort(sortF);
+  const SortableL = this.SortableList;
 
     return (
       <React.Fragment>
-          <this.SortableList items={sortedLists} onSortStart={this.onSortStart} onSortEnd={this.onSortEnd(lists)} axis='xy' useWindowAsScrollContainer={true} useDragHandle={true} pressDelay={mobile} shouldCancelStart={()=>false}/>
+          <SortableL items={sortedLists} onSortStart={this.onSortStart} onSortEnd={this.onSortEnd(lists)} axis='xy' useWindowAsScrollContainer={true} useDragHandle={true} pressDelay={mobile} shouldCancelStart={()=>false}/>
           <FloatingActionButton boardId={boardId}/>
         </React.Fragment>
       ) 

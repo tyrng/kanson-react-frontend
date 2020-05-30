@@ -83,6 +83,7 @@ class BoardList extends React.Component {
 
   render() {
     const { classes, listCards, list } = this.props;
+    const SortH = this.SortHandle;
 
     return (
         <Card className={classes.card} onMouseOver={this.onMouseOver} onMouseLeave={this.onMouseLeave}>
@@ -91,7 +92,7 @@ class BoardList extends React.Component {
                     <div {...provided.droppableProps} ref={provided.innerRef}>
                         <CardContent>
                             <div style={{display: 'flex'}}>
-                                <this.SortHandle value={list.title} />
+                                <SortH value={list.title} />
                                 {this.state.showIcon ? 
                                     <Icon
                                     onMouseDown={this.handleClickOpen}
